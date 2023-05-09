@@ -15,6 +15,13 @@ void CurenWindow::initWindow() {
 	m_window = glfwCreateWindow(m_width, m_height, m_windowName.c_str(), nullptr, nullptr);
 }
 
+void CurenWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
+	if (glfwCreateWindowSurface(instance, m_window, nullptr, surface) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to create window surface.");
+	}
+}
+
 CurenWindow::~CurenWindow() {
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
