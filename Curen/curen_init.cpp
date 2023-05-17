@@ -17,7 +17,9 @@ Curen::CurenInit::~CurenInit()
 void CurenInit::run() {
 	while (!m_curenWindow.shouldClose()) {
 		glfwPollEvents();
+		drawFrame();
 	}
+	vkDeviceWaitIdle(m_curenDevice.device());
 }
 
 
@@ -50,8 +52,70 @@ void Curen::CurenInit::createPipeline()
 
 void Curen::CurenInit::createCommandBuffers()
 {
+	m_commandBuffers.resize(m_curenSwapChain.imageCount());
+
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.pNext = NULL;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = m_curenDevice.getCommandPool();
+	allocInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers.size());
+
+	if(vkAllocateCommandBuffers(m_curenDevice.device(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to allocate command buffer.");
+	}
+
+	for (int i = 0; i < m_commandBuffers.size(); i++)
+	{
+		VkCommandBufferBeginInfo beginInfo{};
+
+		beginInfo.flags = 0;
+		beginInfo.pNext = NULL;
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+		if (vkBeginCommandBuffer(m_commandBuffers.at(i), &beginInfo) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to begin command buffer.");
+		}
+
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.pNext = NULL;
+		renderPassInfo.renderPass = m_curenSwapChain.getRenderPass();
+		renderPassInfo.framebuffer = m_curenSwapChain.getFrameBuffer(i);
+
+		renderPassInfo.renderArea.offset = { 0, 0};
+		renderPassInfo.renderArea.extent = m_curenSwapChain.getSwapChainExtent();
+
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
+
+		vkCmdBeginRenderPass(m_commandBuffers.at(i), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		m_curenPipeline->bind(m_commandBuffers.at(i));
+		vkCmdDraw(m_commandBuffers.at(i), 3, 1, 0, 0);
+
+		vkCmdEndRenderPass(m_commandBuffers.at(i));
+		if (vkEndCommandBuffer(m_commandBuffers.at(i)) != VK_SUCCESS) {
+			throw std::runtime_error("failed to record command buffer!");
+		}
+	}
 }
 
 void Curen::CurenInit::drawFrame()
 {
+	uint32_t imageIndex;
+	auto result = m_curenSwapChain.acquireNextImage(&imageIndex);
+	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+		throw std::runtime_error("failed to acquire swap chain image");
+	}
+
+	result = m_curenSwapChain.submitCommandBuffers(&m_commandBuffers[imageIndex], &imageIndex);
+	if (result != VK_SUCCESS) {
+		throw std::runtime_error("failed to present swap chain image!");
+	}
 }
+

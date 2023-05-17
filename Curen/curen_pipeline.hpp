@@ -29,6 +29,7 @@ namespace Curen {
 		CurenPipeline(const CurenPipeline&) = delete;
 		CurenPipeline& operator = (const CurenPipeline&) = delete;
 
+		void bind(VkCommandBuffer commandBuffer);
 		static PipelineConfigInfo defPipelineConfigInfo(uint32_t width, uint32_t height);
 
 	private:
