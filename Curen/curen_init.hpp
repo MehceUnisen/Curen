@@ -4,6 +4,7 @@
 #include "curen_pipeline.hpp"
 #include "curen_device.hpp"
 #include "curen_swap_chain.hpp"
+#include "curen_model.hpp"
 
 #include <memory>
 #include <vector>
@@ -29,6 +30,7 @@ namespace Curen {
 		void createPipeline();
 		void createCommandBuffers();
 		void drawFrame();
+		void loadModels();
 
 		CurenWindow m_curenWindow{WIDTH, HEIGHT, "Curen"};
 		CurenDevice m_curenDevice{ m_curenWindow };
@@ -36,5 +38,6 @@ namespace Curen {
 		std::unique_ptr<CurenPipeline> m_curenPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;
+		std::unique_ptr<CurenModel> m_curenModel;
 	};
 }

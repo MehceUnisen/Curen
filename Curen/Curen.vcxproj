@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="curen_device.cpp" />
     <ClCompile Include="curen_init.cpp" />
+    <ClCompile Include="curen_model.cpp" />
     <ClCompile Include="curen_pipeline.cpp" />
     <ClCompile Include="curen_swap_chain.cpp" />
     <ClCompile Include="curen_window.cpp" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="curen_device.hpp" />
     <ClInclude Include="curen_init.hpp" />
+    <ClInclude Include="curen_model.hpp" />
     <ClInclude Include="curen_pipeline.hpp" />
     <ClInclude Include="curen_swap_chain.hpp" />
     <ClInclude Include="curen_window.hpp" />

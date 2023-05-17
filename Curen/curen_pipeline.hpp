@@ -1,6 +1,7 @@
 #pragma once
 
 #include "curen_device.hpp"
+#include "curen_model.hpp"
 
 #include <string>
 #include <vector>

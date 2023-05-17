@@ -59,12 +59,16 @@ void CurenPipeline::createGraphicsPipeline(const std::string& vertFilePath, cons
 	shaderStages[1].pNext = nullptr;
 	shaderStages[1].pSpecializationInfo = nullptr;
 
+	auto bindingDescriptionsInfo = CurenModel::Vertex::getBindingDescriptions();
+	auto attributeDescriptionsInfo = CurenModel::Vertex::getAttributeDescriptions();
+
+
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.vertexAttributeDescriptionCount = 0;
-	vertexInputInfo.vertexBindingDescriptionCount = 0;
-	vertexInputInfo.pVertexAttributeDescriptions = nullptr;
-	vertexInputInfo.pVertexBindingDescriptions = nullptr;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptionsInfo.size());
+	vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptionsInfo.size());
+	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptionsInfo.data();
+	vertexInputInfo.pVertexBindingDescriptions = bindingDescriptionsInfo.data();
 	vertexInputInfo.flags = 0;
 	vertexInputInfo.pNext = NULL;
 

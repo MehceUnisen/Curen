@@ -4,6 +4,7 @@ using namespace Curen;
 
 Curen::CurenInit::CurenInit()
 {
+	loadModels();
 	createPipelineLayout();
 	createPipeline();
 	createCommandBuffers();
@@ -96,8 +97,8 @@ void Curen::CurenInit::createCommandBuffers()
 		vkCmdBeginRenderPass(m_commandBuffers.at(i), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		m_curenPipeline->bind(m_commandBuffers.at(i));
-		vkCmdDraw(m_commandBuffers.at(i), 3, 1, 0, 0);
-
+		m_curenModel->bind(m_commandBuffers.at(i));
+		m_curenModel->draw(m_commandBuffers.at(i));
 		vkCmdEndRenderPass(m_commandBuffers.at(i));
 		if (vkEndCommandBuffer(m_commandBuffers.at(i)) != VK_SUCCESS) {
 			throw std::runtime_error("failed to record command buffer!");
@@ -117,5 +118,15 @@ void Curen::CurenInit::drawFrame()
 	if (result != VK_SUCCESS) {
 		throw std::runtime_error("failed to present swap chain image!");
 	}
+}
+
+void Curen::CurenInit::loadModels()
+{
+	std::vector<CurenModel::Vertex> vertices {
+		{{0.0f, -0.5f}},
+		{ {0.5f, 0.5f} },
+		{ {-0.5f, 0.5f} }
+	};
+	m_curenModel = std::make_unique<CurenModel>(m_curenDevice, vertices);
 }
 
