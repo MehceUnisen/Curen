@@ -10,12 +10,10 @@ namespace Curen {
 	struct PipelineConfigInfo {
 		VkViewport viewport;
 		VkRect2D scissor;
-		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
-		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
@@ -29,7 +27,7 @@ namespace Curen {
 		~CurenPipeline();
 
 		CurenPipeline(const CurenPipeline&) = delete;
-		void operator = (const CurenPipeline&) = delete;
+		CurenPipeline& operator = (const CurenPipeline&) = delete;
 
 		static PipelineConfigInfo defPipelineConfigInfo(uint32_t width, uint32_t height);
 

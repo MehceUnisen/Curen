@@ -65,6 +65,30 @@ void CurenPipeline::createGraphicsPipeline(const std::string& vertFilePath, cons
 	vertexInputInfo.vertexBindingDescriptionCount = 0;
 	vertexInputInfo.pVertexAttributeDescriptions = nullptr;
 	vertexInputInfo.pVertexBindingDescriptions = nullptr;
+	vertexInputInfo.flags = 0;
+	vertexInputInfo.pNext = NULL;
+
+	VkPipelineViewportStateCreateInfo viewportInfo{};
+	viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportInfo.viewportCount = 1;
+	viewportInfo.pViewports = &configInfo.viewport;
+	viewportInfo.scissorCount = 1;
+	viewportInfo.pScissors = &configInfo.scissor;
+	viewportInfo.flags = 0;
+	viewportInfo.pNext = NULL;
+	
+	VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
+	colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlendInfo.logicOpEnable = VK_FALSE;
+	colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
+	colorBlendInfo.attachmentCount = 1;
+	colorBlendInfo.flags = 0;
+	colorBlendInfo.pNext = NULL;
+	colorBlendInfo.pAttachments = &configInfo.colorBlendAttachment;
+	colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
+	colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
+	colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
+	colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -72,12 +96,13 @@ void CurenPipeline::createGraphicsPipeline(const std::string& vertFilePath, cons
 	pipelineInfo.pStages = shaderStages;
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &configInfo.inputAssemblyInfo;
-	pipelineInfo.pViewportState = &configInfo.viewportInfo;
+	pipelineInfo.pViewportState = &viewportInfo;
 	pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
 	pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
-	pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
+	pipelineInfo.pColorBlendState = &colorBlendInfo;
 	pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
 	pipelineInfo.pDynamicState = nullptr;
+	pipelineInfo.flags = 0;
 
 	pipelineInfo.layout = configInfo.pipelineLayout;
 	pipelineInfo.renderPass = configInfo.renderPass;
@@ -115,7 +140,9 @@ PipelineConfigInfo CurenPipeline::defPipelineConfigInfo(uint32_t width, uint32_t
 	configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	configInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	configInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
-
+	configInfo.inputAssemblyInfo.flags = 0;
+	configInfo.inputAssemblyInfo.pNext = NULL;
+	
 	configInfo.viewport.x = 0.0f;
 	configInfo.viewport.y = 0.0f;
 	configInfo.viewport.width = static_cast<float>(width);
@@ -126,12 +153,6 @@ PipelineConfigInfo CurenPipeline::defPipelineConfigInfo(uint32_t width, uint32_t
 	configInfo.scissor.offset = { 0, 0 };
 	configInfo.scissor.extent = { width, height };
 
-	configInfo.viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-	configInfo.viewportInfo.viewportCount = 1;
-	configInfo.viewportInfo.pViewports = &configInfo.viewport;
-	configInfo.viewportInfo.scissorCount = 1;
-	configInfo.viewportInfo.pScissors = &configInfo.scissor;
-
 	configInfo.rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
 	configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
@@ -140,6 +161,8 @@ PipelineConfigInfo CurenPipeline::defPipelineConfigInfo(uint32_t width, uint32_t
 	configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
 	configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
+	configInfo.rasterizationInfo.flags = 0;
+	configInfo.rasterizationInfo.pNext = NULL;
 	configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f;  // Optional
 	configInfo.rasterizationInfo.depthBiasClamp = 0.0f;           // Optional
 	configInfo.rasterizationInfo.depthBiasSlopeFactor = 0.0f;     // Optional
@@ -147,6 +170,8 @@ PipelineConfigInfo CurenPipeline::defPipelineConfigInfo(uint32_t width, uint32_t
 	configInfo.multisampleInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	configInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
 	configInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	configInfo.multisampleInfo.flags = 0;
+	configInfo.multisampleInfo.pNext = NULL;
 	configInfo.multisampleInfo.minSampleShading = 1.0f;           // Optional
 	configInfo.multisampleInfo.pSampleMask = nullptr;             // Optional
 	configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;  // Optional
@@ -162,27 +187,20 @@ PipelineConfigInfo CurenPipeline::defPipelineConfigInfo(uint32_t width, uint32_t
 	configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
 	configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
 	configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;              // Optional
-
-	configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
-	configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
-	configInfo.colorBlendInfo.attachmentCount = 1;
-	configInfo.colorBlendInfo.pAttachments = &configInfo.colorBlendAttachment;
-	configInfo.colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
-	configInfo.colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
-	configInfo.colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
-	configInfo.colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
-
+	
 	configInfo.depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
 	configInfo.depthStencilInfo.depthWriteEnable = VK_TRUE;
 	configInfo.depthStencilInfo.depthCompareOp = VK_COMPARE_OP_LESS;
 	configInfo.depthStencilInfo.depthBoundsTestEnable = VK_FALSE;
+	configInfo.depthStencilInfo.flags = 0;
+	configInfo.depthStencilInfo.pNext = NULL;
 	configInfo.depthStencilInfo.minDepthBounds = 0.0f;  // Optional
 	configInfo.depthStencilInfo.maxDepthBounds = 1.0f;  // Optional
 	configInfo.depthStencilInfo.stencilTestEnable = VK_FALSE;
 	configInfo.depthStencilInfo.front = {};  // Optional
 	configInfo.depthStencilInfo.back = {};   // Optional
+
 
 	return configInfo;
 }

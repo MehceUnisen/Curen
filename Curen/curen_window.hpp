@@ -12,6 +12,8 @@ namespace Curen {
 		CurenWindow(int width, int height, std::string name);
 		~CurenWindow();
 
+		VkExtent2D getExtent() { return { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height) }; }
+
 		CurenWindow(const CurenWindow&) = delete;
 		CurenWindow& operator = (const CurenWindow&) = delete;
 

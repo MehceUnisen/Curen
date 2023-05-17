@@ -33,6 +33,9 @@
     <ClCompile Include="curen_device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="curen_swap_chain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="curen_window.hpp">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="curen_device.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curen_swap_chain.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
