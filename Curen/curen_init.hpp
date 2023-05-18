@@ -31,10 +31,13 @@ namespace Curen {
 		void createCommandBuffers();
 		void drawFrame();
 		void loadModels();
+		void recreateSwapChain();
+		void recordCommandBuffer(int imageIndex);
+
 
 		CurenWindow m_curenWindow{WIDTH, HEIGHT, "Curen"};
 		CurenDevice m_curenDevice{ m_curenWindow };
-		CurenSwapChain m_curenSwapChain{ m_curenDevice, m_curenWindow.getExtent() };
+		std::unique_ptr<CurenSwapChain> m_curenSwapChain;
 		std::unique_ptr<CurenPipeline> m_curenPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;

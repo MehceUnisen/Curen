@@ -12,20 +12,26 @@ namespace Curen {
 		CurenWindow(int width, int height, std::string name);
 		~CurenWindow();
 
-		VkExtent2D getExtent() { return { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height) }; }
-
+		
 		CurenWindow(const CurenWindow&) = delete;
 		CurenWindow& operator = (const CurenWindow&) = delete;
-
+		
+		VkExtent2D getExtent() { return { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height) }; }
+				
 		bool shouldClose() { return glfwWindowShouldClose(m_window); }
+		bool wasWindowResized() { return m_frameBufferResized; }
+		void resetWindowResizedFlag() { m_frameBufferResized = false; }
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
-	private:
+	private: 
+		static void frameBufferResizeCallback(GLFWwindow* window, int width, int height);
 		void initWindow();
 		
-		const int m_width;
-		const int m_height;
+		int m_width;
+		int m_height;
 		
+		bool m_frameBufferResized = false;
+
 		std::string m_windowName;
 		GLFWwindow* m_window;
 	};
