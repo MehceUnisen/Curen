@@ -6,12 +6,20 @@
 #include "curen_swap_chain.hpp"
 #include "curen_model.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 #include <memory>
 #include <vector>
 #include <stdexcept>
 #include <array>
+#include <iostream>
 
 namespace Curen {
+
+	
+
 	class CurenInit {
 	public:
 		static constexpr int WIDTH = 800;

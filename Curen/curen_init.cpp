@@ -1,6 +1,11 @@
-#include "curen_init.hpp"
+ #include "curen_init.hpp"
 
 using namespace Curen;
+
+struct SimplePushConstant {
+	glm::vec2 offset;
+	alignas(16) glm::vec3 color;
+};
 
 Curen::CurenInit::CurenInit()
 {
@@ -26,12 +31,18 @@ void CurenInit::run() {
 
 void Curen::CurenInit::createPipelineLayout()
 {
+
+	VkPushConstantRange pushConstantRange{};
+	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+	pushConstantRange.offset = 0;
+	pushConstantRange.size = sizeof(SimplePushConstant);
+
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = 0;
 	pipelineLayoutInfo.pSetLayouts = nullptr;
-	pipelineLayoutInfo.pushConstantRangeCount = 0;
-	pipelineLayoutInfo.pPushConstantRanges = nullptr;
+	pipelineLayoutInfo.pushConstantRangeCount = 1;
+	pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 	if (vkCreatePipelineLayout(m_curenDevice.device(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) !=
 		VK_SUCCESS) {
 		throw std::runtime_error("failed to create pipeline layout!");
@@ -183,7 +194,18 @@ void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 
 	m_curenPipeline->bind(m_commandBuffers.at(imageIndex));
 	m_curenModel->bind(m_commandBuffers.at(imageIndex));
-	m_curenModel->draw(m_commandBuffers.at(imageIndex));
+	
+	for (int i = 0; i < 4; i++)
+	{
+		SimplePushConstant push{};
+		push.offset = { 0.0f, -0.4f + i * 0.25f };
+		push.color = {0.0f, 0.0f, 0.2f + 0.2f * i};
+
+		vkCmdPushConstants(m_commandBuffers[imageIndex], m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
+		m_curenModel->draw(m_commandBuffers.at(imageIndex));
+	}
+
+
 	vkCmdEndRenderPass(m_commandBuffers.at(imageIndex));
 	if (vkEndCommandBuffer(m_commandBuffers.at(imageIndex)) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
