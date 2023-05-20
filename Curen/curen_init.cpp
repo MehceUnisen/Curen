@@ -153,6 +153,7 @@ void Curen::CurenInit::recreateSwapChain()
 
 void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 {
+	static int x = 0;
 	VkCommandBufferBeginInfo beginInfo{};
 
 	beginInfo.flags = 0;
@@ -197,8 +198,9 @@ void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 	
 	for (int i = 0; i < 4; i++)
 	{
+		x = x >= 500 ? 0 : x+=5;
 		SimplePushConstant push{};
-		push.offset = { 0.0f, -0.4f + i * 0.25f };
+		push.offset = { 0.0f + x * 0.01f, -0.4f + i * 0.25f };
 		push.color = {0.0f, 0.0f, 0.2f + 0.2f * i};
 
 		vkCmdPushConstants(m_commandBuffers[imageIndex], m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
