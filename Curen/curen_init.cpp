@@ -3,13 +3,14 @@
 using namespace Curen;
 
 struct SimplePushConstant {
+	glm::mat2 transform{1.0f};
 	glm::vec2 offset;
 	alignas(16) glm::vec3 color;
 };
 
 Curen::CurenInit::CurenInit()
 {
-	loadModels();
+	loadObjects();
 	createPipelineLayout();
 	recreateSwapChain();
 	createCommandBuffers();
@@ -119,14 +120,21 @@ void Curen::CurenInit::drawFrame()
 	}
 }
 
-void Curen::CurenInit::loadModels()
+void Curen::CurenInit::loadObjects()
 {
 	std::vector<CurenModel::Vertex> vertices {
 		{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 		{ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f} },
 		{ {-0.5f, 0.5f} , {0.0f, .0f, 1.0f} }
 	};
-	m_curenModel = std::make_unique<CurenModel>(m_curenDevice, vertices);
+	auto model = std::make_shared<CurenModel>(m_curenDevice, vertices);
+	auto triangle = CurenObject::createObject();
+	triangle.model = model;
+	triangle.color = { .1f, .8f, .1f };
+	//triangle.transform2DComponent.translation.x = .2f;
+	triangle.transform2DComponent.scale = { 1.0f, 1.0f };
+	triangle.transform2DComponent.rotation = 0.25f * glm::two_pi<float>();
+	m_curenObjects.push_back(std::move(triangle));
 }
 
 void Curen::CurenInit::recreateSwapChain()
@@ -153,7 +161,6 @@ void Curen::CurenInit::recreateSwapChain()
 
 void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 {
-	static int x = 0;
 	VkCommandBufferBeginInfo beginInfo{};
 
 	beginInfo.flags = 0;
@@ -193,24 +200,29 @@ void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 	vkCmdSetViewport(m_commandBuffers[imageIndex], 0, 1, &viewport);
 	vkCmdSetScissor(m_commandBuffers[imageIndex], 0, 1, &scissor);
 
-	m_curenPipeline->bind(m_commandBuffers.at(imageIndex));
-	m_curenModel->bind(m_commandBuffers.at(imageIndex));
-	
-	for (int i = 0; i < 4; i++)
-	{
-		x = x >= 500 ? 0 : x+=5;
-		SimplePushConstant push{};
-		push.offset = { 0.0f + x * 0.01f, -0.4f + i * 0.25f };
-		push.color = {0.0f, 0.0f, 0.2f + 0.2f * i};
-
-		vkCmdPushConstants(m_commandBuffers[imageIndex], m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
-		m_curenModel->draw(m_commandBuffers.at(imageIndex));
-	}
-
+	renderObjects(m_commandBuffers.at(imageIndex));
 
 	vkCmdEndRenderPass(m_commandBuffers.at(imageIndex));
 	if (vkEndCommandBuffer(m_commandBuffers.at(imageIndex)) != VK_SUCCESS) {
 		throw std::runtime_error("failed to record command buffer!");
+	}
+}
+
+void CurenInit::renderObjects(VkCommandBuffer commandBuffer)
+{
+	m_curenPipeline->bind(commandBuffer);
+
+	for (auto &obj : m_curenObjects)
+	{
+		obj.transform2DComponent.rotation = glm::mod(obj.transform2DComponent.rotation + 0.05f, glm::two_pi<float>());
+		SimplePushConstant push{};
+		push.offset = obj.transform2DComponent.translation;
+		push.color = obj.color;
+		push.transform = obj.transform2DComponent.mat2();
+
+		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
+		obj.model->bind(commandBuffer);
+		obj.model->draw(commandBuffer);
 	}
 }
 

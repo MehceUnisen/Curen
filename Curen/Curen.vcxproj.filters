@@ -39,6 +39,9 @@
     <ClCompile Include="curen_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="curen_object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="curen_window.hpp">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="curen_model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curen_object.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

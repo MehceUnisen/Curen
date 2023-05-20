@@ -5,10 +5,12 @@
 #include "curen_device.hpp"
 #include "curen_swap_chain.hpp"
 #include "curen_model.hpp"
+#include "curen_object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include <memory>
 #include <vector>
@@ -39,9 +41,10 @@ namespace Curen {
 		void createCommandBuffers();
 		void freeCommandBuffers();
 		void drawFrame();
-		void loadModels();
+		void loadObjects();
 		void recreateSwapChain();
 		void recordCommandBuffer(int imageIndex);
+		void renderObjects(VkCommandBuffer commandBuffer);
 
 
 		CurenWindow m_curenWindow{WIDTH, HEIGHT, "Curen"};
@@ -50,6 +53,6 @@ namespace Curen {
 		std::unique_ptr<CurenPipeline> m_curenPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;
-		std::unique_ptr<CurenModel> m_curenModel;
+		std::vector<CurenObject> m_curenObjects;
 	};
 }
