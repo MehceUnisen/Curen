@@ -9,13 +9,15 @@
 namespace Curen {
 
 	struct PipelineConfigInfo {
-		VkViewport viewport;
-		VkRect2D scissor;
+		VkPipelineViewportStateCreateInfo viewportInfo;
+		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
 		VkPipelineMultisampleStateCreateInfo multisampleInfo;
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		std::vector<VkDynamicState> dynamicStateEnables;
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
@@ -31,7 +33,7 @@ namespace Curen {
 		CurenPipeline& operator = (const CurenPipeline&) = delete;
 
 		void bind(VkCommandBuffer commandBuffer);
-		static PipelineConfigInfo defPipelineConfigInfo(uint32_t width, uint32_t height);
+		static PipelineConfigInfo defPipelineConfigInfo(PipelineConfigInfo& pipelineConfigInfo);
 
 	private:
 		static std::vector<char> readFile(const std::string& filepath);

@@ -40,8 +40,9 @@ void Curen::CurenInit::createPipelineLayout()
 
 void Curen::CurenInit::createPipeline()
 {
+	PipelineConfigInfo pipelineConfigInfo{};
 	auto pipelineConfig =
-		CurenPipeline::defPipelineConfigInfo(m_curenSwapChain->width(), m_curenSwapChain->height());
+		CurenPipeline::defPipelineConfigInfo(pipelineConfigInfo);
 	pipelineConfig.renderPass = m_curenSwapChain->getRenderPass();
 	pipelineConfig.pipelineLayout = m_pipelineLayout;
 	m_curenPipeline = std::make_unique<CurenPipeline>(
@@ -67,6 +68,16 @@ void Curen::CurenInit::createCommandBuffers()
 	}
 
 	
+}
+
+void Curen::CurenInit::freeCommandBuffers()
+{
+	vkFreeCommandBuffers(
+		m_curenDevice.device(),
+		m_curenDevice.getCommandPool(),
+		static_cast<uint32_t>(m_commandBuffers.size()),
+		m_commandBuffers.data());
+	m_commandBuffers.clear();
 }
 
 void Curen::CurenInit::drawFrame()
@@ -116,7 +127,16 @@ void Curen::CurenInit::recreateSwapChain()
 	}
 
 	vkDeviceWaitIdle(m_curenDevice.device());
-	m_curenSwapChain = std::make_unique<CurenSwapChain>(m_curenDevice, extent);
+	if (m_curenSwapChain == nullptr) {
+		m_curenSwapChain = std::make_unique<CurenSwapChain>(m_curenDevice, extent);
+	}
+	else {
+		m_curenSwapChain = std::make_unique<CurenSwapChain>(m_curenDevice, extent, std::move(m_curenSwapChain));
+		if (m_curenSwapChain->imageCount() != m_commandBuffers.size()) {
+			freeCommandBuffers();
+			createCommandBuffers();
+		}
+	}
 	createPipeline();
 }
 
@@ -149,6 +169,17 @@ void Curen::CurenInit::recordCommandBuffer(int imageIndex)
 	renderPassInfo.pClearValues = clearValues.data();
 
 	vkCmdBeginRenderPass(m_commandBuffers.at(imageIndex), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	
+	VkViewport viewport{};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = static_cast<float>(m_curenSwapChain->getSwapChainExtent().width);
+	viewport.height = static_cast<float>(m_curenSwapChain->getSwapChainExtent().height);
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	VkRect2D scissor{ {0, 0}, m_curenSwapChain->getSwapChainExtent() };
+	vkCmdSetViewport(m_commandBuffers[imageIndex], 0, 1, &viewport);
+	vkCmdSetScissor(m_commandBuffers[imageIndex], 0, 1, &scissor);
 
 	m_curenPipeline->bind(m_commandBuffers.at(imageIndex));
 	m_curenModel->bind(m_commandBuffers.at(imageIndex));

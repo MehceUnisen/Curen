@@ -7,6 +7,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace Curen {
 
@@ -15,6 +16,7 @@ namespace Curen {
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
         CurenSwapChain(CurenDevice& deviceRef, VkExtent2D windowExtent);
+        CurenSwapChain(CurenDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<CurenSwapChain> oldSwapChain);
         ~CurenSwapChain();
 
         CurenSwapChain(const CurenSwapChain&) = delete;
@@ -38,6 +40,7 @@ namespace Curen {
         VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
     private:
+        void init();
         void createSwapChain();
         void createImageViews();
         void createDepthResources();
@@ -68,6 +71,7 @@ namespace Curen {
         VkExtent2D windowExtent;
 
         VkSwapchainKHR swapChain;
+        std::shared_ptr<CurenSwapChain> oldSwapChain;
 
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
