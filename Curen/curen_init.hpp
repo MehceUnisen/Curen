@@ -1,11 +1,11 @@
 #pragma once
 
 #include "curen_window.hpp"
-#include "curen_pipeline.hpp"
 #include "curen_device.hpp"
-#include "curen_swap_chain.hpp"
+#include "curen_renderer.hpp"
 #include "curen_model.hpp"
 #include "curen_object.hpp"
+#include "curen_render_system.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -36,23 +36,11 @@ namespace Curen {
 		CurenInit& operator = (const CurenInit&) = delete;
 
 	private:
-		void createPipelineLayout();
-		void createPipeline();
-		void createCommandBuffers();
-		void freeCommandBuffers();
-		void drawFrame();
 		void loadObjects();
-		void recreateSwapChain();
-		void recordCommandBuffer(int imageIndex);
-		void renderObjects(VkCommandBuffer commandBuffer);
-
 
 		CurenWindow m_curenWindow{WIDTH, HEIGHT, "Curen"};
 		CurenDevice m_curenDevice{ m_curenWindow };
-		std::unique_ptr<CurenSwapChain> m_curenSwapChain;
-		std::unique_ptr<CurenPipeline> m_curenPipeline;
-		VkPipelineLayout m_pipelineLayout;
-		std::vector<VkCommandBuffer> m_commandBuffers;
+		CurenRenderer m_curenRenderer{ m_curenWindow, m_curenDevice };
 		std::vector<CurenObject> m_curenObjects;
 	};
 }
