@@ -3,8 +3,7 @@
 using namespace Curen;
 
 struct SimplePushConstant {
-	glm::mat2 transform{1.0f};
-	glm::vec2 offset;
+	glm::mat4 transform{1.0f};
 	alignas(16) glm::vec3 color;
 };
 
@@ -62,11 +61,11 @@ void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 
 	for (auto& obj : curenObjects)
 	{
-		obj.transform2DComponent.rotation = glm::mod(obj.transform2DComponent.rotation + 0.05f, glm::two_pi<float>());
+		obj.transformComponent.rotation.y = glm::mod(obj.transformComponent.rotation.y + 0.05f, glm::two_pi<float>());
+		obj.transformComponent.rotation.x = glm::mod(obj.transformComponent.rotation.x + 0.02f, glm::two_pi<float>());
 		SimplePushConstant push{};
-		push.offset = obj.transform2DComponent.translation;
 		push.color = obj.color;
-		push.transform = obj.transform2DComponent.mat2();
+		push.transform = obj.transformComponent.mat4();
 
 		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
 		obj.model->bind(commandBuffer);
