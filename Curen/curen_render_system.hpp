@@ -1,5 +1,6 @@
 #pragma once
 
+#include "curen_camera.hpp"
 #include "curen_pipeline.hpp"
 #include "curen_device.hpp"
 #include "curen_object.hpp"
@@ -22,7 +23,7 @@ namespace Curen {
 	class CurenRenderSystem {
 	public:
 
-		void renderObjects(VkCommandBuffer commandBuffer, std::vector<CurenObject>& curenObjects);
+		void renderObjects(VkCommandBuffer commandBuffer, std::vector<CurenObject>& curenObjects, const CurenCamera& camera);
 
 		CurenRenderSystem(CurenDevice& device, VkRenderPass renderPass);
 		~CurenRenderSystem();

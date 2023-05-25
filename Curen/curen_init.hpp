@@ -19,9 +19,6 @@
 #include <iostream>
 
 namespace Curen {
-
-	
-
 	class CurenInit {
 	public:
 		static constexpr int WIDTH = 800;

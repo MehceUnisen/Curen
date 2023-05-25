@@ -30,6 +30,7 @@ namespace Curen {
 		CurenRenderer& operator = (const CurenRenderer&) = delete;
 
 		VkRenderPass getSwapChainRenderPass() const { return m_curenSwapChain->getRenderPass(); }
+		float getAspectRatio() const { return m_curenSwapChain->extentAspectRatio(); }
 
 		bool isFrameInProgress() const { return m_isFrameStarted; }
 
