@@ -20,11 +20,11 @@ void CurenInit::run() {
 	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass()};
 
     CurenCamera camera{};
+    camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.f), glm::vec3(0.f, 0.f, 2.5f));
 
 	while (!m_curenWindow.shouldClose()) {
 		glfwPollEvents();
         float aspect = m_curenRenderer.getAspectRatio();
-        //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
         camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
 		if (auto commandBuffer = m_curenRenderer.beginFrame()) {
 			m_curenRenderer.beginSwapChainRenderPass(commandBuffer);
@@ -98,7 +98,7 @@ void Curen::CurenInit::loadObjects()
     std::shared_ptr<CurenModel> curenModel = createCubeModel(m_curenDevice, { .0f, .0f, .0f });
     auto cube = CurenObject::createObject();
     cube.model = curenModel;
-    cube.transformComponent.translation = { .0f, .0f, 1.5f };
+    cube.transformComponent.translation = glm::vec3(0.f, 0.f, 2.5f);
     cube.transformComponent.scale = { 0.5f, 0.5f , 0.5f };
     m_curenObjects.push_back(std::move(cube));
 }

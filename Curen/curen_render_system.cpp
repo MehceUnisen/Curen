@@ -59,13 +59,15 @@ void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 {
 	m_curenPipeline->bind(commandBuffer);
 
+	auto projectionView = camera.getProjection() * camera.getView();
+
 	for (auto& obj : curenObjects)
 	{
 		obj.transformComponent.rotation.y = glm::mod(obj.transformComponent.rotation.y + 0.05f, glm::two_pi<float>());
 		obj.transformComponent.rotation.x = glm::mod(obj.transformComponent.rotation.x + 0.02f, glm::two_pi<float>());
 		SimplePushConstant push{};
 		push.color = obj.color;
-		push.transform = camera.getProjection() * obj.transformComponent.mat4();
+		push.transform = projectionView * obj.transformComponent.mat4();
 
 		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
 		obj.model->bind(commandBuffer);
