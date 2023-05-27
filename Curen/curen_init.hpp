@@ -7,6 +7,7 @@
 #include "curen_object.hpp"
 #include "curen_render_system.hpp"
 
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -17,6 +18,7 @@
 #include <stdexcept>
 #include <array>
 #include <iostream>
+#include <chrono>
 
 namespace Curen {
 	class CurenInit {

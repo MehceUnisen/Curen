@@ -63,8 +63,6 @@ void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 
 	for (auto& obj : curenObjects)
 	{
-		obj.transformComponent.rotation.y = glm::mod(obj.transformComponent.rotation.y + 0.05f, glm::two_pi<float>());
-		obj.transformComponent.rotation.x = glm::mod(obj.transformComponent.rotation.x + 0.02f, glm::two_pi<float>());
 		SimplePushConstant push{};
 		push.color = obj.color;
 		push.transform = projectionView * obj.transformComponent.mat4();

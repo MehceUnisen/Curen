@@ -1,5 +1,6 @@
 #include "curen_init.hpp"
 #include "curen_camera.hpp"
+#include "keyboard_manager.hpp"
 
 using namespace Curen;
 
@@ -22,8 +23,21 @@ void CurenInit::run() {
     CurenCamera camera{};
     camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.f), glm::vec3(0.f, 0.f, 2.5f));
 
+    CurenObject viewerObject = CurenObject::createObject();
+    KeyboardManager cameraController{};
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+
 	while (!m_curenWindow.shouldClose()) {
 		glfwPollEvents();
+
+        auto newTime = std::chrono::high_resolution_clock::now();
+        float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+        currentTime = newTime;
+        
+        cameraController.moveInPlaneXZ(m_curenWindow.getWindow(), frameTime, viewerObject);
+        camera.setViewYXZ(viewerObject.transformComponent.translation, viewerObject.transformComponent.rotation);
+        
         float aspect = m_curenRenderer.getAspectRatio();
         camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
 		if (auto commandBuffer = m_curenRenderer.beginFrame()) {

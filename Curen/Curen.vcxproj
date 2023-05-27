@@ -153,6 +153,7 @@
     <ClCompile Include="curen_render_system.cpp" />
     <ClCompile Include="curen_swap_chain.cpp" />
     <ClCompile Include="curen_window.cpp" />
+    <ClCompile Include="keyboard_manager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="curen_render_system.hpp" />
     <ClInclude Include="curen_swap_chain.hpp" />
     <ClInclude Include="curen_window.hpp" />
+    <ClInclude Include="keyboard_manager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="compile.bat" />
