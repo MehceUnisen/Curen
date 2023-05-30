@@ -1,15 +1,22 @@
 #include "curen_model.hpp"
 
-Curen::CurenModel::CurenModel(CurenDevice& curenDevice, const std::vector<Vertex>& vertices) :
+Curen::CurenModel::CurenModel(CurenDevice& curenDevice, const CurenModel::Builder& builder) :
 	m_curenDevice {curenDevice}
 {
-	createVertexBuffer(vertices);
+	createVertexBuffer(builder.vertices);
+	createIndexBuffer(builder.indices);
 }
 
 Curen::CurenModel::~CurenModel()
 {
 	vkDestroyBuffer(m_curenDevice.device(), m_vertexBuffer, nullptr);
 	vkFreeMemory(m_curenDevice.device(), m_vertexBufferMemory, nullptr);
+
+	if (m_hasIndexBuffer)
+	{
+		vkDestroyBuffer(m_curenDevice.device(), m_indexBuffer, nullptr);
+		vkFreeMemory(m_curenDevice.device(), m_indexBufferMemory, nullptr);
+	}
 }
 
 void Curen::CurenModel::bind(VkCommandBuffer commandBuffer)
@@ -17,11 +24,23 @@ void Curen::CurenModel::bind(VkCommandBuffer commandBuffer)
 	VkBuffer buffers[] = { m_vertexBuffer };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+	
+	if (m_hasIndexBuffer)
+	{
+		vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer, 0, VK_INDEX_TYPE_UINT32); 
+	}
 }
 
 void Curen::CurenModel::draw(VkCommandBuffer commandBuffer)
 {
-	vkCmdDraw(commandBuffer, m_vertexCount, 1, 0, 0);
+	if (m_hasIndexBuffer)
+	{
+		vkCmdDrawIndexed(commandBuffer, m_indexCount, 1, 0, 0, 0);
+
+	}
+	else {
+		vkCmdDraw(commandBuffer, m_vertexCount, 1, 0, 0);
+	}
 }
 
 void Curen::CurenModel::createVertexBuffer(const std::vector<Vertex>& vertices)
@@ -29,13 +48,65 @@ void Curen::CurenModel::createVertexBuffer(const std::vector<Vertex>& vertices)
 	m_vertexCount = static_cast<uint32_t>(vertices.size());
 	assert(m_vertexCount >= 3 && "Vertex count must be at least three.");
 	VkDeviceSize bufferSize = sizeof(vertices.at(0)) * m_vertexCount;
-	m_curenDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+
+
+	m_curenDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		m_vertexBuffer, m_vertexBufferMemory);
+		stagingBuffer, stagingBufferMemory);
 	void* data;
-	vkMapMemory(m_curenDevice.device(), m_vertexBufferMemory, 0, bufferSize, 0, &data);
+	vkMapMemory(m_curenDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
 	memcpy(data, vertices.data(), (size_t)bufferSize);
-	vkUnmapMemory(m_curenDevice.device(), m_vertexBufferMemory);
+	vkUnmapMemory(m_curenDevice.device(), stagingBufferMemory);
+
+	m_curenDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		m_vertexBuffer, m_vertexBufferMemory);
+
+	m_curenDevice.copyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
+	
+	vkDestroyBuffer(m_curenDevice.device(), stagingBuffer, nullptr);
+	vkFreeMemory(m_curenDevice.device(), stagingBufferMemory, nullptr);
+
+}
+
+
+void Curen::CurenModel::createIndexBuffer(const std::vector<uint32_t>& indices)
+{
+	m_indexCount = static_cast<uint32_t>(indices.size());
+	m_hasIndexBuffer = m_indexCount > 0;
+
+	if (!m_hasIndexBuffer)
+	{
+		return;
+	}
+
+	VkDeviceSize bufferSize = sizeof(indices.at(0)) * m_indexCount;
+
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+
+
+	m_curenDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		stagingBuffer, stagingBufferMemory);
+	void* data;
+	vkMapMemory(m_curenDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
+	memcpy(data, indices.data(), (size_t)bufferSize);
+	vkUnmapMemory(m_curenDevice.device(), stagingBufferMemory);
+
+	m_curenDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		m_indexBuffer, m_indexBufferMemory);
+
+	m_curenDevice.copyBuffer(stagingBuffer, m_indexBuffer, bufferSize);
+
+	vkDestroyBuffer(m_curenDevice.device(), stagingBuffer, nullptr);
+	vkFreeMemory(m_curenDevice.device(), stagingBufferMemory, nullptr);
+
 }
 
 std::vector<VkVertexInputBindingDescription> Curen::CurenModel::Vertex::getBindingDescriptions()
