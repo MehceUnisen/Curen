@@ -1,6 +1,7 @@
 #pragma once
 
 #include "curen_device.hpp"
+#include "curen_utils.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -8,21 +9,33 @@
 
 #include <vector>
 #include <cassert>
+#include <memory>
+#include <unordered_map>
 
 namespace Curen {
 	class CurenModel {
 	public:
 
 		struct Vertex {
-			glm::vec3 position;
-			glm::vec3 color;
+			glm::vec3 position{};
+			glm::vec3 color{};
+			glm::vec3 normal{};
+			glm::vec2 uv{};
+
 			static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+			bool operator==(const Vertex& other) const {
+				return position == other.position && color == other.color && normal == other.normal &&
+					uv == other.uv;
+			}
 		};
 
 		struct Builder {
 			std::vector<Vertex> vertices{};
 			std::vector<uint32_t> indices{};
+
+			void loadModel(const std::string& filePath);
 		};
 
 		CurenModel(CurenDevice& curenDevice, const CurenModel::Builder& builder);
@@ -30,6 +43,8 @@ namespace Curen {
 
 		CurenModel(const CurenModel&) = delete;
 		CurenModel& operator = (const CurenModel&) = delete;
+
+		static std::unique_ptr<CurenModel> createModelFromFile(CurenDevice& curenDevice, const std::string& filePath);
 
 		void bind(VkCommandBuffer commandBuffer);
 		void draw(VkCommandBuffer commandBuffer);

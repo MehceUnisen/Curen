@@ -77,7 +77,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;$(SolutionDir)Libraries\TinyObjectLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -95,7 +95,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;$(SolutionDir)Libraries\TinyObjectLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;$(SolutionDir)Libraries\TinyObjectLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\Include;$(SolutionDir)Libraries\GLFW\include;$(SolutionDir)Libraries\GLM;$(SolutionDir)Libraries\TinyObjectLoader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,6 +166,7 @@
     <ClInclude Include="curen_renderer.hpp" />
     <ClInclude Include="curen_render_system.hpp" />
     <ClInclude Include="curen_swap_chain.hpp" />
+    <ClInclude Include="curen_utils.hpp" />
     <ClInclude Include="curen_window.hpp" />
     <ClInclude Include="keyboard_manager.hpp" />
   </ItemGroup>
