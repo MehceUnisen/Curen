@@ -53,11 +53,11 @@ void CurenInit::run() {
 
 void Curen::CurenInit::loadObjects()
 {
-    std::shared_ptr<CurenModel> curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/viking_room.obj");
+    std::shared_ptr<CurenModel> curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/flat_vase.obj");
     auto cube = CurenObject::createObject();
     cube.model = curenModel;
-    cube.transformComponent.translation = glm::vec3(0.f, 0.f, 2.5f);
-    cube.transformComponent.scale = { 0.5f, 0.5f , 0.5f };
+    cube.transformComponent.translation = glm::vec3(0.f, 0.5f, 2.5f);
+    cube.transformComponent.scale = { 3.f, 1.5f, 3.f };
     m_curenObjects.push_back(std::move(cube));
 }
  

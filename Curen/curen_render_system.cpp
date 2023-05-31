@@ -4,7 +4,7 @@ using namespace Curen;
 
 struct SimplePushConstant {
 	glm::mat4 transform{1.0f};
-	alignas(16) glm::vec3 color;
+	glm::mat4 normalMatrix{1.0f};
 };
 
 CurenRenderSystem::CurenRenderSystem(CurenDevice& device, VkRenderPass renderPass) :
@@ -64,9 +64,9 @@ void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 	for (auto& obj : curenObjects)
 	{
 		SimplePushConstant push{};
-		push.color = obj.color;
-		push.transform = projectionView * obj.transformComponent.mat4();
-
+		auto normalMatrix = obj.transformComponent.mat4();
+		push.transform = projectionView * normalMatrix;
+		push.normalMatrix = normalMatrix;
 		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
 		obj.model->bind(commandBuffer);
 		obj.model->draw(commandBuffer);
