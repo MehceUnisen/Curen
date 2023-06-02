@@ -55,11 +55,11 @@ void CurenRenderSystem::createPipeline(VkRenderPass renderPass)
 
 
 
-void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<CurenObject>& curenObjects, const CurenCamera& camera)
+void CurenRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects)
 {
-	m_curenPipeline->bind(commandBuffer);
+	m_curenPipeline->bind(frameInfo.commandBuffer);
 
-	auto projectionView = camera.getProjection() * camera.getView();
+	auto projectionView = frameInfo.camera.getProjection() * frameInfo.camera.getView();
 
 	for (auto& obj : curenObjects)
 	{
@@ -67,9 +67,9 @@ void CurenRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 		auto normalMatrix = obj.transformComponent.mat4();
 		push.transform = projectionView * normalMatrix;
 		push.normalMatrix = normalMatrix;
-		vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
-		obj.model->bind(commandBuffer);
-		obj.model->draw(commandBuffer);
+		vkCmdPushConstants(frameInfo.commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstant), &push);
+		obj.model->bind(frameInfo.commandBuffer);
+		obj.model->draw(frameInfo.commandBuffer);
 	}
 }
 

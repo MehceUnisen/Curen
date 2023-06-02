@@ -4,6 +4,7 @@
 #include "curen_pipeline.hpp"
 #include "curen_device.hpp"
 #include "curen_object.hpp"
+#include "curen_frame_info.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -23,7 +24,7 @@ namespace Curen {
 	class CurenRenderSystem {
 	public:
 
-		void renderObjects(VkCommandBuffer commandBuffer, std::vector<CurenObject>& curenObjects, const CurenCamera& camera);
+		void renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects);
 
 		CurenRenderSystem(CurenDevice& device, VkRenderPass renderPass);
 		~CurenRenderSystem();

@@ -40,7 +40,7 @@ namespace Curen {
 		}
 
 		int getFrameIndex() const { 
-			assert(m_currentFrameIndex && "Can't get frame index when frame is in progress");
+			assert(m_isFrameStarted && "Can't get frame index when frame is in progress");
 			return m_currentFrameIndex;
 		}
 
