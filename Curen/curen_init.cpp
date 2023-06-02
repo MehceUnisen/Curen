@@ -24,16 +24,18 @@ Curen::CurenInit::~CurenInit()
 
 void CurenInit::run() {
 
-    CurenBuffer globalUboBuffer{
-        m_curenDevice,
-        sizeof(GlobalUbo),
-        CurenSwapChain::MAX_FRAMES_IN_FLIGHT,
-        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-        m_curenDevice.properties.limits.minUniformBufferOffsetAlignment
-    };
-
-    globalUboBuffer.map();
+    std::vector<std::unique_ptr<CurenBuffer>> uboBuffers(CurenSwapChain::MAX_FRAMES_IN_FLIGHT);
+    for (int i = 0; i < uboBuffers.size(); i++)
+    {
+        uboBuffers.at(i) = std::make_unique<CurenBuffer>(
+            m_curenDevice,
+            sizeof(GlobalUbo),
+            1,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+        uboBuffers.at(i)->map();
+    }
+  
 
 	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass()};
 
@@ -65,8 +67,8 @@ void CurenInit::run() {
 
             GlobalUbo globalUbo{};
             globalUbo.projectionView = camera.getProjection() * camera.getView();
-            globalUboBuffer.writeToIndex(&globalUbo, frameIndex);
-            globalUboBuffer.flush(frameIndex);
+            uboBuffers.at(frameIndex)->writeToBuffer(&globalUbo);
+            uboBuffers.at(frameIndex)->flush();
 
             m_curenRenderer.beginSwapChainRenderPass(commandBuffer);
 			renderSystem.renderObjects(frameInfo, m_curenObjects);
