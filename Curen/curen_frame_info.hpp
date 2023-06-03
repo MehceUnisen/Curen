@@ -10,5 +10,6 @@ namespace Curen {
 		float frameTime;
 		VkCommandBuffer commandBuffer;
 		CurenCamera& camera;
+		VkDescriptorSet globalDescriptorSet;
 	};
 }

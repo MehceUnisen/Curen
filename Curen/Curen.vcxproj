@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="curen_buffer.cpp" />
     <ClCompile Include="curen_camera.cpp" />
+    <ClCompile Include="curen_descriptor.cpp" />
     <ClCompile Include="curen_device.cpp" />
     <ClCompile Include="curen_init.cpp" />
     <ClCompile Include="curen_model.cpp" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="curen_buffer.hpp" />
     <ClInclude Include="curen_camera.hpp" />
+    <ClInclude Include="curen_descriptor.hpp" />
     <ClInclude Include="curen_device.hpp" />
     <ClInclude Include="curen_frame_info.hpp" />
     <ClInclude Include="curen_init.hpp" />

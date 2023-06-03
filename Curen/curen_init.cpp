@@ -1,6 +1,4 @@
 #include "curen_init.hpp"
-#include "curen_camera.hpp"
-#include "keyboard_manager.hpp"
 
 using namespace Curen;
 
@@ -12,9 +10,11 @@ namespace Curen {
 }
 CurenInit::CurenInit()
 {
-	loadObjects();
-    
-	
+	m_globalDescriptorPool = CurenDescriptorPool::Builder(m_curenDevice)
+        .setMaxSets(CurenSwapChain::MAX_FRAMES_IN_FLIGHT)
+        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, CurenSwapChain::MAX_FRAMES_IN_FLIGHT)
+        .build();
+    loadObjects();
 }
 
 Curen::CurenInit::~CurenInit()
@@ -35,9 +35,21 @@ void CurenInit::run() {
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
         uboBuffers.at(i)->map();
     }
-  
+    
+    auto globalSetLayout = CurenDescriptorSetLayout::Builder(m_curenDevice)
+        .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+        .build();
 
-	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass()};
+    std::vector<VkDescriptorSet> globalDescriptorSets(CurenSwapChain::MAX_FRAMES_IN_FLIGHT);
+    for (int i = 0; i < globalDescriptorSets.size(); i++)
+    {
+        auto bufferInfo = uboBuffers.at(i)->descriptorInfo();
+        CurenDescriptorWriter(*globalSetLayout, *m_globalDescriptorPool)
+            .writeBuffer(0, &bufferInfo)
+            .build(globalDescriptorSets.at(i));
+    }
+
+	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 
     CurenCamera camera{};
     camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.f), glm::vec3(0.f, 0.f, 2.5f));
@@ -63,7 +75,7 @@ void CurenInit::run() {
         if (auto commandBuffer = m_curenRenderer.beginFrame()) {
 
             int frameIndex = m_curenRenderer.getFrameIndex();
-            FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera };
+            FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets.at(frameIndex)};
 
             GlobalUbo globalUbo{};
             globalUbo.projectionView = camera.getProjection() * camera.getView();

@@ -24,16 +24,16 @@ namespace Curen {
 	class CurenRenderSystem {
 	public:
 
-		void renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects);
-
-		CurenRenderSystem(CurenDevice& device, VkRenderPass renderPass);
+		CurenRenderSystem(CurenDevice& device, VkRenderPass renderPass, VkDescriptorSetLayout globalDescriptorSet);
 		~CurenRenderSystem();
 
 		CurenRenderSystem(const CurenRenderSystem&) = delete;
 		CurenRenderSystem& operator = (const CurenRenderSystem&) = delete;
+		
+		void renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects);
 
 	private:
-		void createPipelineLayout();
+		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
 		void createPipeline(VkRenderPass renderPass);
 		
 
