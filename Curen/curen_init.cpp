@@ -5,7 +5,9 @@ using namespace Curen;
 namespace Curen {
     struct GlobalUbo {
         glm::mat4 projectionView{1.f};
-        glm::vec3 lightDirection = glm::normalize(glm::vec3(1.f, -3.f, -1.f));
+        glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};
+        glm::vec3 lightPosition{-1.f};
+        alignas(16) glm::vec4 lightColor{1.f};
     };
 }
 CurenInit::CurenInit()
@@ -52,9 +54,10 @@ void CurenInit::run() {
 	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 
     CurenCamera camera{};
-    camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.f), glm::vec3(0.f, 0.f, 2.5f));
-
+    camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.5f), glm::vec3(0.f, 0.f, 2.5f));
+    
     CurenObject viewerObject = CurenObject::createObject();
+    viewerObject.transformComponent.translation.z = -2.5f;
     KeyboardManager cameraController{};
 
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -70,7 +73,7 @@ void CurenInit::run() {
         camera.setViewYXZ(viewerObject.transformComponent.translation, viewerObject.transformComponent.rotation);
         
         float aspect = m_curenRenderer.getAspectRatio();
-        camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+        camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 		
         if (auto commandBuffer = m_curenRenderer.beginFrame()) {
 
@@ -97,15 +100,23 @@ void Curen::CurenInit::loadObjects()
     std::shared_ptr<CurenModel> curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/flat_vase.obj");
     auto cube = CurenObject::createObject();
     cube.model = curenModel;
-    cube.transformComponent.translation = glm::vec3(1.f, 0.5f, 2.5f);
+    cube.transformComponent.translation = glm::vec3(1.f, 0.5f, .0f);
     cube.transformComponent.scale = { 3.f, 1.5f, 3.f };
     m_curenObjects.push_back(std::move(cube));
 
     curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/smooth_vase.obj");
     auto x = CurenObject::createObject();
     x.model = curenModel;
-    x.transformComponent.translation = glm::vec3(-1.f, 0.5f, 2.5f);
+    x.transformComponent.translation = glm::vec3(-1.f, 0.5f, .0f);
     x.transformComponent.scale = { 3.f, 1.5f, 3.f };
     m_curenObjects.push_back(std::move(x));
+    
+    curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/quad.obj");
+    auto y = CurenObject::createObject();
+    y.model = curenModel;
+    y.transformComponent.translation = glm::vec3(0.f, 0.5f, .0f);
+    y.transformComponent.scale = { 3.f, 1.f, 3.f };
+    m_curenObjects.push_back(std::move(y));
+
 }
  

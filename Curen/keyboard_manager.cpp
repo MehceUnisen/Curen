@@ -67,7 +67,7 @@ void KeyboardManager::moveInPlaneXZ(GLFWwindow* window, float dt, CurenObject& o
 
 	if (glfwGetKey(window, keys.focus) == GLFW_PRESS)
 	{
-		object.transformComponent.translation = glm::vec3{ 0.f };
+		object.transformComponent.translation = glm::vec3{ 0.f, 0.f, -2.5f };
 		object.transformComponent.rotation = glm::vec3{ 0.f };
 	}
 
