@@ -57,15 +57,16 @@ void CurenRenderSystem::createPipeline(VkRenderPass renderPass)
 
 
 
-void CurenRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects)
+void CurenRenderSystem::renderObjects(FrameInfo& frameInfo)
 {
 	m_curenPipeline->bind(frameInfo.commandBuffer);
 
 	vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-	for (auto& obj : curenObjects)
-	{
+	for (auto& kv : frameInfo.objects)
+	{	
+		CurenObject& obj = kv.second;
 		SimplePushConstant push{};
 		push.modelMatrix = obj.transformComponent.mat4();
 		push.normalMatrix = obj.transformComponent.normalMatrix();

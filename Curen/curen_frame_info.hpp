@@ -11,5 +11,6 @@ namespace Curen {
 		VkCommandBuffer commandBuffer;
 		CurenCamera& camera;
 		VkDescriptorSet globalDescriptorSet;
+		CurenObject::Map& objects;
 	};
 }

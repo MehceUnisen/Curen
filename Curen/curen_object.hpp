@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
+#include <unordered_map>
 
 namespace Curen {
 
@@ -19,7 +20,8 @@ namespace Curen {
 	class CurenObject {
 	public:
 		using id_t = unsigned int;
-
+		using Map = std::unordered_map<id_t, CurenObject>;
+	
 		static CurenObject createObject() {
 			static id_t currentId = 0;
 			return CurenObject{ currentId++ };

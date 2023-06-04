@@ -39,7 +39,7 @@ void CurenInit::run() {
     }
     
     auto globalSetLayout = CurenDescriptorSetLayout::Builder(m_curenDevice)
-        .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+        .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
         .build();
 
     std::vector<VkDescriptorSet> globalDescriptorSets(CurenSwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -78,7 +78,7 @@ void CurenInit::run() {
         if (auto commandBuffer = m_curenRenderer.beginFrame()) {
 
             int frameIndex = m_curenRenderer.getFrameIndex();
-            FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets.at(frameIndex)};
+            FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets.at(frameIndex), m_curenObjects};
 
             GlobalUbo globalUbo{};
             globalUbo.projectionView = camera.getProjection() * camera.getView();
@@ -86,7 +86,7 @@ void CurenInit::run() {
             uboBuffers.at(frameIndex)->flush();
 
             m_curenRenderer.beginSwapChainRenderPass(commandBuffer);
-			renderSystem.renderObjects(frameInfo, m_curenObjects);
+			renderSystem.renderObjects(frameInfo);
 			m_curenRenderer.endSwapChainRenderPass(commandBuffer);
 			m_curenRenderer.endFrame();
 		}
@@ -102,21 +102,21 @@ void Curen::CurenInit::loadObjects()
     cube.model = curenModel;
     cube.transformComponent.translation = glm::vec3(1.f, 0.5f, .0f);
     cube.transformComponent.scale = { 3.f, 1.5f, 3.f };
-    m_curenObjects.push_back(std::move(cube));
+    m_curenObjects.emplace(cube.getId(), std::move(cube));
 
     curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/smooth_vase.obj");
     auto x = CurenObject::createObject();
     x.model = curenModel;
     x.transformComponent.translation = glm::vec3(-1.f, 0.5f, .0f);
     x.transformComponent.scale = { 3.f, 1.5f, 3.f };
-    m_curenObjects.push_back(std::move(x));
+    m_curenObjects.emplace(x.getId(),std::move(x));
     
     curenModel = CurenModel::createModelFromFile(m_curenDevice, "../Models/quad.obj");
     auto y = CurenObject::createObject();
     y.model = curenModel;
     y.transformComponent.translation = glm::vec3(0.f, 0.5f, .0f);
     y.transformComponent.scale = { 3.f, 1.f, 3.f };
-    m_curenObjects.push_back(std::move(y));
+    m_curenObjects.emplace(y.getId(), std::move(y));
 
 }
  

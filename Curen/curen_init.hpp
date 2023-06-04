@@ -43,6 +43,6 @@ namespace Curen {
 		CurenDevice m_curenDevice{ m_curenWindow };
 		CurenRenderer m_curenRenderer{ m_curenWindow, m_curenDevice };
 		std::unique_ptr <CurenDescriptorPool> m_globalDescriptorPool{};
-		std::vector<CurenObject> m_curenObjects;
+		CurenObject::Map m_curenObjects;
 	};
 }

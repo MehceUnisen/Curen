@@ -30,7 +30,7 @@ namespace Curen {
 		CurenRenderSystem(const CurenRenderSystem&) = delete;
 		CurenRenderSystem& operator = (const CurenRenderSystem&) = delete;
 		
-		void renderObjects(FrameInfo& frameInfo, std::vector<CurenObject>& curenObjects);
+		void renderObjects(FrameInfo& frameInfo);
 
 	private:
 		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
