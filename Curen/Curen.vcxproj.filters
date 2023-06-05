@@ -16,6 +16,15 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{9a0e38d0-4fb2-4376-87f6-349f48e8826c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{4dbbb081-f2f9-4be3-a715-7fe799bcc368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Source Files">
+      <UniqueIdentifier>{d61009d6-696b-4574-9dc1-7fbfa72378c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Header Files">
+      <UniqueIdentifier>{b307567c-3a75-4253-ad82-bf729923a3f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,9 +54,6 @@
     <ClCompile Include="curen_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="curen_render_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="curen_camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,6 +65,12 @@
     </ClCompile>
     <ClCompile Include="curen_descriptor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="curen_render_system.cpp">
+      <Filter>Systems\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="curen_point_light_system.cpp">
+      <Filter>Systems\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,9 +98,6 @@
     <ClInclude Include="curen_renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="curen_render_system.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="curen_camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -107,6 +116,12 @@
     <ClInclude Include="curen_descriptor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="curen_render_system.hpp">
+      <Filter>Systems\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curen_point_light_system.hpp">
+      <Filter>Systems\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="first_shader.vert">
@@ -117,6 +132,12 @@
     </None>
     <None Include="compile.bat">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="point_light.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="point_light.vert">
+      <Filter>Shader</Filter>
     </None>
   </ItemGroup>
 </Project>

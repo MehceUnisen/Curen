@@ -9,6 +9,7 @@
 #include "curen_camera.hpp"
 #include "keyboard_manager.hpp"
 #include "curen_descriptor.hpp"
+#include "curen_point_light_system.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

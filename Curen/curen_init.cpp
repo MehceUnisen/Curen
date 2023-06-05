@@ -4,7 +4,8 @@ using namespace Curen;
 
 namespace Curen {
     struct GlobalUbo {
-        glm::mat4 projectionView{1.f};
+        glm::mat4 projection{1.f};
+        glm::mat4 view{1.f};
         glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};
         glm::vec3 lightPosition{-1.f};
         alignas(16) glm::vec4 lightColor{1.f};
@@ -52,6 +53,7 @@ void CurenInit::run() {
     }
 
 	CurenRenderSystem renderSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+	CurenPointLightSystem pointLightSystem {m_curenDevice, m_curenRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
 
     CurenCamera camera{};
     camera.setViewTarget(glm::vec3(-1.f, -2.f, -2.5f), glm::vec3(0.f, 0.f, 2.5f));
@@ -81,12 +83,14 @@ void CurenInit::run() {
             FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globalDescriptorSets.at(frameIndex), m_curenObjects};
 
             GlobalUbo globalUbo{};
-            globalUbo.projectionView = camera.getProjection() * camera.getView();
+            globalUbo.projection = camera.getProjection();
+            globalUbo.view = camera.getView();
             uboBuffers.at(frameIndex)->writeToBuffer(&globalUbo);
             uboBuffers.at(frameIndex)->flush();
 
             m_curenRenderer.beginSwapChainRenderPass(commandBuffer);
 			renderSystem.renderObjects(frameInfo);
+            pointLightSystem.render(frameInfo);
 			m_curenRenderer.endSwapChainRenderPass(commandBuffer);
 			m_curenRenderer.endFrame();
 		}
