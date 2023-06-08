@@ -148,7 +148,7 @@ void CurenRenderer::freeCommandBuffers()
 		m_curenDevice.getCommandPool(),
 		static_cast<uint32_t>(m_commandBuffers.size()),
 		m_commandBuffers.data());
-	vkEndCommandBuffer(m_commandBuffers.at(m_currentImageIndex));
+	
 	m_commandBuffers.clear();
 }
 

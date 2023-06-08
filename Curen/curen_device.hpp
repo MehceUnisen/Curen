@@ -83,6 +83,7 @@ namespace Curen {
 
       // helper functions
       bool isDeviceSuitable(VkPhysicalDevice device);
+      bool isDiscreteGpuAvailable(VkPhysicalDevice device);
       std::vector<const char *> getRequiredExtensions();
       bool checkValidationLayerSupport();
       QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);

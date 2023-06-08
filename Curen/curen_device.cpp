@@ -119,9 +119,10 @@ void CurenDevice::pickPhysicalDevice() {
     std::cout << "Device count: " << deviceCount << std::endl;
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-
+    VkPhysicalDeviceProperties prop{};
+    
     for (const auto& device : devices) {
-        if (isDeviceSuitable(device)) {
+        if (isDiscreteGpuAvailable(device)) {
             physicalDevice = device;
             break;
         }
@@ -214,6 +215,17 @@ bool CurenDevice::isDeviceSuitable(VkPhysicalDevice device) {
 
     return indices.isComplete() && extensionsSupported && swapChainAdequate &&
         supportedFeatures.samplerAnisotropy;
+}
+
+bool CurenDevice::isDiscreteGpuAvailable(VkPhysicalDevice device) {
+    VkPhysicalDeviceProperties properties{};
+    VkPhysicalDeviceFeatures features{};
+    
+    vkGetPhysicalDeviceProperties(device, &properties);
+    vkGetPhysicalDeviceFeatures(device, &features);
+    
+    return properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && features.geometryShader;
+
 }
 
 void CurenDevice::populateDebugMessengerCreateInfo(
